@@ -81,7 +81,7 @@ void unset_candidate(Cell *cell, int value)
 
 bool is_candidate(Cell *cell, int value)
 {
-    return cell->candidates[value - 1] == 1;
+    return cell->candidates[value - 1] == 1; // 0->8 vs 1->9
 }
 
 void set_candidates(Cell *cell, int *candidates, int size)
@@ -106,15 +106,15 @@ void set_candidates(Cell *cell, int *candidates, int size)
     }
 }
 
-int *get_candidates(Cell *cell)
+int *get_candidates(Cell *cell) // cell : 3, 5, 7
 {
     int *out = malloc(cell->num_candidates * sizeof(int));
     int counter = 0;
-    for (int i = 0; i < BOARD_SIZE; i++)
+    for (int i = 0; i < BOARD_SIZE; i++) // for: 0 -> 8
     {
-        if (cell->candidates[i])
+        if (cell->candidates[i]) // i == 2, i == 4, i == 6
         {
-            out[counter++] = i + 1;
+            out[counter++] = i + 1; // out[0] = 3, out[1] = 5, out[2] = 7  
         }
     }
     return out;
