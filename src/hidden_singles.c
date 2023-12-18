@@ -34,7 +34,6 @@ int hidden_singles(SudokuBoard *p_board)
         // printf("Hidden single: %d %d %d\n", hidden_singles[i].p_cell->row_index, hidden_singles[i].p_cell->col_index, hidden_singles[i].value);
         set_candidates(hidden_singles[i].p_cell, &(hidden_singles[i].value), 1);
     }
-
     return counter;
 }
 
@@ -56,7 +55,7 @@ int find_hidden_single_values(Cell **p_cells, int *hidden_single_values)
         {
             candidate_counter[candidates[j] - 1] += 1;
         }
-        // free(candidates);
+        free(candidates);
     }
 
     for (int i = 0; i < BOARD_SIZE; i++)
@@ -80,7 +79,7 @@ void find_hidden_single(Cell **p_cells, HiddenSingle *p_hidden_singles,
     {
         for (int j = 0; j < BOARD_SIZE; j++)
         {
-            if (p_cells[j]->fixed)
+            if (p_cells[j]->fixed | (p_cells[j]->num_candidates == 1))
             {
                 continue;
             }
@@ -110,7 +109,7 @@ void find_hidden_single(Cell **p_cells, HiddenSingle *p_hidden_singles,
                     }
                 }
             }
-            // free(candidates);
+            free(candidates);
         }
     }
 }
