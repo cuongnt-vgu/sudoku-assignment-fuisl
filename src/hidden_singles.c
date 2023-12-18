@@ -32,7 +32,7 @@ int hidden_singles(SudokuBoard *p_board)
     for (int i = 0; i < counter; i++)
     {
         // printf("Hidden single: %d %d %d\n", hidden_singles[i].p_cell->row_index, hidden_singles[i].p_cell->col_index, hidden_singles[i].value);
-        set_candidate(hidden_singles[i].p_cell, hidden_singles[i].value);
+        set_candidates(hidden_singles[i].p_cell, &(hidden_singles[i].value), 1);
     }
 
     return counter;
