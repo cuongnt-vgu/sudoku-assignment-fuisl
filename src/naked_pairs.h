@@ -15,7 +15,7 @@ typedef struct NakedPairs_impl
 int naked_pairs(SudokuBoard *p_board);
 
 // unset candidates for a row/col/box
-void unset_pairs(Cell **p_cells, NakedPairs *p_naked_pairs, int *p_counter);
+void unset_pairs(Cell **p_cells, int value1, int value2, Cell *p_cell1, Cell *p_cell2);
 
 // find naked pair cell in a board and return the number of pair
 void find_naked_pairs(Cell **p_cells, NakedPairs *p_naked_pairs, int *p_counter);

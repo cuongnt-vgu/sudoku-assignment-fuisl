@@ -12,7 +12,7 @@ int naked_pairs(SudokuBoard *p_board)
         find_naked_pairs(p_board->p_rows[i], naked_pairs, &naked_pairs_counter);
         find_naked_pairs(p_board->p_cols[i], naked_pairs, &naked_pairs_counter);
         find_naked_pairs(p_board->p_boxes[i], naked_pairs, &naked_pairs_counter);
-    }
+   }
 
     return naked_pairs_counter;
 }
@@ -50,7 +50,7 @@ void find_naked_pairs(Cell **p_cells, NakedPairs *p_naked_pairs,
                             break;
                         }
                     }
-                    
+
                     if (!duplicate)
                     {
                         p_naked_pairs[*p_counter].p_cell1 = p_cells[i];
@@ -58,6 +58,8 @@ void find_naked_pairs(Cell **p_cells, NakedPairs *p_naked_pairs,
                         p_naked_pairs[*p_counter].value1 = candidates_i[0];
                         p_naked_pairs[*p_counter].value2 = candidates_i[1];
                         *p_counter += 1;
+
+                        unset_pairs(p_cells, candidates_i[0], candidates_i[1], p_cells[i], p_cells[j]);
                     }
                 }
                 free(candidates_i);
@@ -67,25 +69,23 @@ void find_naked_pairs(Cell **p_cells, NakedPairs *p_naked_pairs,
     }
 }
 
-void unset_pairs(Cell **p_cells, NakedPairs *p_naked_pairs, int *p_counter)
+void unset_pairs(Cell **p_cells, int value1, int value2, Cell *p_cell1, Cell *p_cell2)
 {
     for (int i = 0; i < BOARD_SIZE; i++)
     {
-        if (p_cells[i] == p_naked_pairs[*p_counter].p_cell1 || p_cells[i] == p_naked_pairs[*p_counter].p_cell1) // why p_naked_pairs[*p_counter].p_cell1 instead of p_naked_pairs[*p_counter]->p_cell2?
+        if (p_cells[i]->fixed || p_cells[i]->num_candidates == 1 || p_cells[i] == p_cell1 || p_cells[i] == p_cell2)
         {
             continue;
         }
+        int *candidates = get_candidates(p_cells[i]);
 
-        if (p_cells[i]->fixed)
+        for (int j = 0; j < p_cells[i]->num_candidates; j++)
         {
-            continue;
+            if (candidates[j] == value1 || candidates[j] == value2)
+            {
+                unset_candidate(p_cells[i], candidates[j]);
+            }
         }
-        // int value1 = p_naked_pairs[*p_counter].value1;
-        // int value2 = p_naked_pairs[*p_counter].value2;
-
-        // printf("Unsetting %d and %d from cell\n", value1, value2);
-
-        // unset_candidate(p_cells[i], value1);
-        // unset_candidate(p_cells[i], value2);
+        free(candidates);
     }
 }
