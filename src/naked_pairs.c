@@ -21,7 +21,7 @@ void find_naked_pairs(Cell **p_cells, NakedPairs *p_naked_pairs,
                       int *p_counter)
 {
 
-    for (int i = 0; i < BOARD_SIZE; i++)
+    for (int i = 0; i < BOARD_SIZE-1; i++)
     {
         if (p_cells[i]->fixed)
         {
