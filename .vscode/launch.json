@@ -9,8 +9,8 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/autograder",
-            "args": ["402g05agg1bi09a23g812o116s4u6s0im4mk032og0esdses9ge46k14g18a8c219e400h0c2k066oks4uksi011812k94eossdsssi00c03jg41aiqo8oqo05qajo0986ag11ckuk8iu0mgik94ag03csus9gu8mo",
-                "hidden_pairs",
+            "args": ["09801mk06gmg7mmmkgg1411g04032gboao8g210m0m1181094mkmkg052q6qc810cgg122cg11ggkg210503cgcg094iiq81k84gkg262611c2i2m20h0911c0s005cg0s4s02g1c4co1121cg10msc060e4coso03",
+                "hidden_triples",
                 "0"
         ],
             "stopAtEntry": false,
