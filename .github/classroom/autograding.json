@@ -3,7 +3,7 @@
     {
       "name": "All test cases",
       "setup": "make clean all",
-      "run": "python ./test/autograder.py",
+      "run": "python ./test/autograder.py 1 2 3 4 5 6 7 8 9 10",
       "input": "",
       "output": "Running test test001\nTest passed successfully\n\nRunning test test002\nTest passed successfully\n\nRunning test test003\nTest passed successfully\n\nRunning test test004\nTest passed successfully\n\nRunning test test005\nTest passed successfully\n\nRunning test test006\nTest passed successfully\n\nRunning test test007\nTest passed successfully\n\nRunning test test008\nTest passed successfully\n\nRunning test test009\nTest passed successfully\n\nRunning test test010\nTest passed successfully\n\n============================== SUMMARY ==============================\nPASSED: test001, test002, test003, test004, test005, test006, test007, test008, test009, test010 | 100.0 %\nFAILED:  | 0.0 %",
       "comparison": "exact",
