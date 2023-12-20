@@ -2,10 +2,10 @@
   "tests": [
     {
       "name": "All test cases",
-      "setup": "",
-      "run": "make check",
+      "setup": "make clean all",
+      "run": "python ./test/autograder.py",
       "input": "",
-      "output": "",
+      "output": "Running test test001\nTest passed successfully\n\nRunning test test002\nTest passed successfully\n\nRunning test test003\nTest passed successfully\n\nRunning test test004\nTest passed successfully\n\nRunning test test005\nTest passed successfully\n\nRunning test test006\nTest passed successfully\n\nRunning test test007\nTest passed successfully\n\nRunning test test008\nTest passed successfully\n\nRunning test test009\nTest passed successfully\n\nRunning test test010\nTest passed successfully\n\n============================== SUMMARY ==============================\nPASSED: test001, test002, test003, test004, test005, test006, test007, test008, test009, test010 | 100.0 %\nFAILED:  | 0.0 %",
       "comparison": "exact",
       "timeout": 10,
       "points": null
