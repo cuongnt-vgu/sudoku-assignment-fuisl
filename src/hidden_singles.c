@@ -54,7 +54,8 @@ int find_hidden_single_values(Cell **p_cells, int *hidden_single_values)
         for (int j = 0; j < p_cells[i]->num_candidates; j++)
         {
             candidate_counter[candidates[j] - 1] += 1;
-        }        free(candidates);
+        }
+        free(candidates);
     }
 
     for (int i = 0; i < BOARD_SIZE; i++)
@@ -78,7 +79,7 @@ void find_hidden_single(Cell **p_cells, HiddenSingle *p_hidden_singles,
     {
         for (int j = 0; j < BOARD_SIZE; j++)
         {
-            if (p_cells[j]->fixed | (p_cells[j]->num_candidates == 1))
+            if (p_cells[j]->fixed || (p_cells[j]->num_candidates == 1))
             {
                 continue;
             }
