@@ -19,4 +19,4 @@ void unset_triples(Cell **p_cells, int value1, int value2, int value3, Cell *p_c
 
 void find_naked_triples(Cell **p_cells, NakedTriples *p_naked_triples, int *p_counter);
 
-bool is_naked_triples(Cell **p_cells, int i, int j, int k);
+bool is_naked_triples(Cell **p_cells, int i, int j, int k, int *p_naked_triples_candidates);

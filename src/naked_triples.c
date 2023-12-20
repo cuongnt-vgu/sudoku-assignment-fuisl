@@ -32,26 +32,25 @@ void unset_triples(Cell **p_cells, int value1, int value2, int value3, Cell *p_c
     }
 }
 
-bool is_naked_triples(Cell **p_cells, int i, int j, int k)
+bool is_naked_triples(Cell **p_cells, int i, int j, int k, int *p_naked_triples_candidates)
 {
-    int naked_triples_candidates[BOARD_SIZE] = {0};
     int *candidates_i = get_candidates(p_cells[i]);
     int *candidates_j = get_candidates(p_cells[j]);
     int *candidates_k = get_candidates(p_cells[k]);
 
     for (int l = 0; l < p_cells[i]->num_candidates; l++)
     {
-        naked_triples_candidates[candidates_i[l]-1] += 1;
+        p_naked_triples_candidates[candidates_i[l]-1] += 1;
     }
 
     for (int l = 0; l < p_cells[j]->num_candidates; l++)
     {
-        naked_triples_candidates[candidates_j[l]-1] += 1;
+        p_naked_triples_candidates[candidates_j[l]-1] += 1;
     }
 
     for (int l = 0; l < p_cells[k]->num_candidates; l++)
     {
-        naked_triples_candidates[candidates_k[l]-1] += 1;
+        p_naked_triples_candidates[candidates_k[l]-1] += 1;
     }
 
     free(candidates_i);
@@ -61,7 +60,7 @@ bool is_naked_triples(Cell **p_cells, int i, int j, int k)
     int count = 0;
     for (int l = 0; l < BOARD_SIZE; l++)
     {
-        if (naked_triples_candidates[l] >= 1)
+        if (p_naked_triples_candidates[l] >= 1)
         {
             count++;
         }
@@ -99,7 +98,7 @@ void find_naked_triples(Cell **p_cells, NakedTriples *p_naked_triples, int *p_co
                 }
 
                 int naked_triples_candidates[BOARD_SIZE] = {0};
-                if (is_naked_triples(p_cells, i, j, k))
+                if (is_naked_triples(p_cells, i, j, k, naked_triples_candidates))
                 {
                     // unset candidates for other cells in the same row/col/box
                     for (int l = 0; l < BOARD_SIZE; l++)
@@ -110,7 +109,13 @@ void find_naked_triples(Cell **p_cells, NakedTriples *p_naked_triples, int *p_co
                             {
                                 if ((p_cells[m]->num_candidates > 1) && (p_cells[m] != p_cells[i]) && (p_cells[m] != p_cells[j]) && (p_cells[m] != p_cells[k]))
                                 {
-                                    unset_candidate(p_cells[m], l+1);
+                                    for (int n = 0; n < BOARD_SIZE; n++)
+                                    {
+                                        if ((p_cells[m]->candidates[n] == 1) && (n == l))
+                                        {
+                                            unset_candidate(p_cells[m], l+1);
+                                        }
+                                    }
                                 }
                             }
                         }
