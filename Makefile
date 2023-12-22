@@ -17,7 +17,7 @@ FILES = $(wildcard src/*.c) $(wildcard src/*.h)
 OBJS = src/hidden_singles.o src/hidden_pairs.o src/hidden_triples.o src/naked_pairs.o src/naked_triples.o src/naked_triples.o src/utils.o
 BINS = sudoku autograder
 
-TEST_COUNT = 10
+TEST_COUNT = 20
 TESTS = $(shell seq 1 1 $(TEST_COUNT))
 
 # How verbose should test output be? 0 gives default output, 1 gives
