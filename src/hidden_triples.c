@@ -31,106 +31,126 @@ void find_hidden_triples(Cell **p_cells, HiddenTriples *p_hidden_triples,
 {
     HiddenTriples temp;
 
-    int *hidden_triple_values = malloc(sizeof(int) * BOARD_SIZE);
-    hidden_triple_values = memset(hidden_triple_values, 0, sizeof(int) * BOARD_SIZE);  // initialize array with 0s
-
-    // int hidden_triple_values[BOARD_SIZE] = {0};
+    int hidden_triple_values[BOARD_SIZE] = {0};
     int hidden_triple_value_counter = find_hidden_triple_values(p_cells, hidden_triple_values);
 
-    if (hidden_triple_value_counter != 3) // not enough hidden triple values
+    if (hidden_triple_value_counter < 3) // not enough hidden triple values
     {
-        free(hidden_triple_values);
         return;
     }
 
-    int arr_counter = 0; // address next cell in arr
-    int counter = 0;     // number of cells with hidden triple values
-    for (int i = 0; i < BOARD_SIZE; i++)
+    for (int first = 0; first < hidden_triple_value_counter - 2; first++)
     {
-        if (p_cells[i]->fixed || p_cells[i]->num_candidates == 1 || p_cells[i]->num_candidates <= 3)
+        for (int second = first + 1; second < hidden_triple_value_counter - 1; second++)
         {
-            continue;
-        }
-    
-        int *candidates = get_candidates(p_cells[i]);
-
-        int count_same = 0;
-        for (int j = 0; j < p_cells[i]->num_candidates; j++)
-        {
-            if (candidates[j] == hidden_triple_values[0] || candidates[j] == hidden_triple_values[1] || candidates[j] == hidden_triple_values[2])
+            for (int third = second + 1; third < hidden_triple_value_counter; third++)
             {
+                int *triple = malloc(sizeof(int) * 3);
+                triple[0] = hidden_triple_values[first];
+                triple[1] = hidden_triple_values[second];
+                triple[2] = hidden_triple_values[third];
+
+                int arr_counter = 0; // address next cell in arr
+                int counter = 0;     // number of cells with hidden triple values
+                int count_naked = 0; // number of cells with naked triple values
+                for (int i = 0; i < BOARD_SIZE; i++)
                 {
-                    count_same++;
+                    if (p_cells[i]->num_candidates == 1 || p_cells[i]->fixed)
+                    {
+                        continue;
+                    }
+
+                    int *candidates = get_candidates(p_cells[i]);
+
+                    int count_same = 0;
+                    for (int j = 0; j < p_cells[i]->num_candidates; j++)
+                    {
+                        if (candidates[j] == triple[0] || candidates[j] == triple[1] || candidates[j] == triple[2])
+                        {
+                            {
+                                count_same++;
+                            }
+                        }
+                    }
+                    free(candidates);
+
+                    if (count_same == p_cells[i]->num_candidates)  // all candidates are hidden triple values --> not hidden --> skip
+                    {
+                        count_naked++;
+                    }
+
+                    if (count_same == 3 || count_same == 2)
+                    {
+                        switch (arr_counter)
+                        {
+                        case 0:
+                            temp.p_cell1 = p_cells[i];
+                            break;
+                        case 1:
+                            temp.p_cell2 = p_cells[i];
+                            break;
+                        case 2:
+                            temp.p_cell3 = p_cells[i];
+                            break;
+                        }
+
+                        arr_counter++;
+                        counter++;
+                    }
                 }
-                
+
+                temp.arr = triple; // save hidden triple values in temp struct to be copied to p_hidden_triples later
+                if (counter != 3)  // not enough cells with hidden triple values
+                {
+                    free(temp.arr);
+                    break;
+                }
+
+                bool flagged = false;
+                // check if hidden triple values appear in other cells except the 3 cells
+                for (int i = 0; i < BOARD_SIZE; i++)
+                {
+                    if (p_cells[i] == temp.p_cell1 || p_cells[i] == temp.p_cell2 || p_cells[i] == temp.p_cell3)
+                    {
+                        continue;
+                    }
+
+                    if (p_cells[i]->fixed || p_cells[i]->num_candidates == 1)
+                    {
+                        continue;
+                    }
+
+                    int *candidates = get_candidates(p_cells[i]);
+                    for (int j = 0; j < p_cells[i]->num_candidates; j++)
+                    {
+                        if (candidates[j] == triple[0] || candidates[j] == triple[1] || candidates[j] == triple[2])
+                        {
+                            flagged = true;
+                        }
+                    }
+                    free(candidates);
+                }
+
+                if (count_naked == 3) // hidden triple values are also naked triple values
+                {
+                    flagged = true;
+                }
+
+                if (flagged) // hidden triple values are not only in 3 cells
+                {
+                    free(temp.arr);
+                    return;
+                }
+
+                p_hidden_triples[*p_counter] = temp; // BUG: this is not a deep copy. Values in p_hidden_triples[*p_counter].arr will be overwritten in next iteration
+
+                // free(hidden_triple_values);
+                // free(temp.arr);
+
+                *p_counter += 1;
             }
         }
-        free(candidates);
-
-        if (count_same == 3 || count_same == 2)
-        {
-            switch (arr_counter)
-            {
-            case 0:
-                temp.p_cell1 = p_cells[i];
-                break;
-            case 1:
-                temp.p_cell2 = p_cells[i];
-                break;
-            case 2:
-                temp.p_cell3 = p_cells[i];
-                break;
-            }
-
-            arr_counter++;
-            counter++;
-        }
     }
-
-    temp.arr = hidden_triple_values;  // save hidden triple values in temp struct to be copied to p_hidden_triples later
-    if (counter != 3) // not enough cells with hidden triple values
-    {
-        free(temp.arr);
-        return;
-    }
-
-    bool flagged = false;
-    // check if hidden triple values are only in 3 cells
-    for (int i = 0; i < BOARD_SIZE; i++)
-    {
-        if (p_cells[i] == temp.p_cell1 || p_cells[i] == temp.p_cell2 || p_cells[i] == temp.p_cell3)
-        {
-            continue;
-        }
-
-        if (p_cells[i]->fixed || p_cells[i]->num_candidates == 1)
-        {
-            continue;
-        }
-
-        int *candidates = get_candidates(p_cells[i]);
-        for (int j = 0; j < p_cells[i]->num_candidates; j++)
-        {
-            if (candidates[j] == hidden_triple_values[0] || candidates[j] == hidden_triple_values[1] || candidates[j] == hidden_triple_values[2])
-            {
-                flagged = true;
-            }
-        }
-        free(candidates);
-    }
-
-    if (flagged)  // hidden triple values are not only in 3 cells
-    {
-        free(temp.arr);
-        return;
-    }
-
-    p_hidden_triples[*p_counter] = temp; // BUG: this is not a deep copy. Values in p_hidden_triples[*p_counter].arr will be overwritten in next iteration
-
-    // free(hidden_triple_values);
-    // free(temp.arr);
-
-    *p_counter += 1;
 }
 
 int find_hidden_triple_values(Cell **p_cells, int *hidden_triple_values)
@@ -173,13 +193,13 @@ void unset_hidden_triple_values(HiddenTriples *p_hidden_triples, int *num_hidden
         int *candidates_1 = get_candidates(p_hidden_triples[i].p_cell1);
         int *candidates_2 = get_candidates(p_hidden_triples[i].p_cell2);
         int *candidates_3 = get_candidates(p_hidden_triples[i].p_cell3);
-        
+
         int temp[BOARD_SIZE] = {0};
         for (int j = 0; j < p_hidden_triples[i].p_cell1->num_candidates; j++)
         {
             if (candidates_1[j] != p_hidden_triples[i].arr[0] && candidates_1[j] != p_hidden_triples[i].arr[1] && candidates_1[j] != p_hidden_triples[i].arr[2])
             {
-                temp[candidates_1[j] - 1]++;  // save candidate to be unset later
+                temp[candidates_1[j] - 1]++; // save candidate to be unset later
             }
         }
         for (int j = 0; j < BOARD_SIZE; j++)
@@ -196,7 +216,7 @@ void unset_hidden_triple_values(HiddenTriples *p_hidden_triples, int *num_hidden
         {
             if (candidates_2[j] != p_hidden_triples[i].arr[0] && candidates_2[j] != p_hidden_triples[i].arr[1] && candidates_2[j] != p_hidden_triples[i].arr[2])
             {
-                temp[candidates_2[j] - 1]++;  // save candidate to be unset later
+                temp[candidates_2[j] - 1]++; // save candidate to be unset later
             }
         }
         for (int j = 0; j < BOARD_SIZE; j++)
@@ -213,7 +233,7 @@ void unset_hidden_triple_values(HiddenTriples *p_hidden_triples, int *num_hidden
         {
             if (candidates_3[j] != p_hidden_triples[i].arr[0] && candidates_3[j] != p_hidden_triples[i].arr[1] && candidates_3[j] != p_hidden_triples[i].arr[2])
             {
-                temp[candidates_3[j] - 1]++;  // save candidate to be unset later
+                temp[candidates_3[j] - 1]++; // save candidate to be unset later
             }
         }
         for (int j = 0; j < BOARD_SIZE; j++)
@@ -223,8 +243,6 @@ void unset_hidden_triple_values(HiddenTriples *p_hidden_triples, int *num_hidden
                 unset_candidate(p_hidden_triples[i].p_cell3, j + 1);
             }
         }
-
-
 
         free(candidates_1);
         free(candidates_2);

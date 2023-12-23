@@ -33,17 +33,16 @@ void find_hidden_pairs(Cell **p_cells, HiddenPairs *p_hidden_pairs,
 {
     int hidden_pair_values[BOARD_SIZE] = {0};
     int hidden_pair_value_counter = find_hidden_pair_values(p_cells, hidden_pair_values);
-    
 
     for (int m = 0; m < hidden_pair_value_counter - 1; m++)
     {
         for (int n = m + 1; n < hidden_pair_value_counter; n++)
         {
-            int* pair = malloc(sizeof(int) * 2);
+            int *pair = malloc(sizeof(int) * 2);
             pair[0] = hidden_pair_values[m];
             pair[1] = hidden_pair_values[n];
             bool flagged = false;
-            int counter = 0;  // number of cells with hidden pair values
+            int counter = 0; // number of cells with hidden pair values
             for (int i = 0; i < BOARD_SIZE; i++)
             {
                 if (p_cells[i]->fixed || p_cells[i]->num_candidates <= 2)
@@ -61,7 +60,7 @@ void find_hidden_pairs(Cell **p_cells, HiddenPairs *p_hidden_pairs,
                         count_same++;
                     }
                 }
-                
+
                 if (count_same == 2)
                 {
                     if (!flagged)
@@ -84,8 +83,26 @@ void find_hidden_pairs(Cell **p_cells, HiddenPairs *p_hidden_pairs,
                 free(pair);
                 continue;
             }
-            p_hidden_pairs[*p_counter].arr = pair;
-            *p_counter += 1;
+
+            bool duplicate = false;
+            for (int i = 0; i < *p_counter; i++)
+            {
+                if (p_hidden_pairs[i].p_cell1 == p_hidden_pairs[*p_counter].p_cell1 && p_hidden_pairs[i].p_cell2 == p_hidden_pairs[*p_counter].p_cell2)
+                {
+                    duplicate = true;
+                    break;
+                }
+            }
+
+            if (!duplicate)
+            {
+                p_hidden_pairs[*p_counter].arr = pair;
+                *p_counter += 1;
+            }
+            else
+            {
+                free(pair);
+            }
         }
     }
 }
